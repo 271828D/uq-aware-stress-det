@@ -1,0 +1,11 @@
+# @package hydra.sweeper
+# This file merges directly into the hydra.sweeper config
+
+# Define the search space parameters here
+params:
+  model.C: interval(1e-5, 1e2)
+  model.solver: choice(saga)
+  model.penalty: choice(l1, l2)
+  # model.l1_ratio: interval(0.1, 0.9)
+  model.max_iter: choice(500, 1000, 2000)
+  seed: choice(42, 7, 123, 456, 69, 1312, 11, 2026)

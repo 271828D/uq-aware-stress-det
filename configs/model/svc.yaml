@@ -1,0 +1,14 @@
+# @package _global_
+# Support Vector Machine Configuration
+
+model:
+  _target_: src.models.factory.ModelFactory.get_model
+  # _partial_: true  <-- REMOVED: We need the model instance, not a function
+  
+  # Model Arguments
+  model_name: "svc"
+  C: 1.0
+  kernel: "rbf"
+  probability: true  # Required for ROC-AUC and probability outputs
+  random_state: ${seed}
+  verbose: true

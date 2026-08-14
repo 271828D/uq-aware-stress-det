@@ -1,0 +1,34 @@
+# @package _global_
+# Logistic Regression Configuration (Optimized for Large Datasets)
+
+model:
+  _target_: src.models.factory.ModelFactory.get_model
+  
+  # Model Identification
+  model_name: "logistic_regression"
+  
+  # Solver: 'saga' is best for large datasets and supports L1/L2/ElasticNet
+  # 'lbfgs' is also good for dense data but only supports L2
+  solver: "saga"
+  
+  # Regularization: 'l2' prevents overfitting (standard choice)
+  penalty: "l2"
+  
+  # C: Inverse of regularization strength. 
+  # Smaller = stronger regularization. 1.0 is a standard starting point.
+  C: 1.0
+  
+  # Max Iterations: Increased from default 100 to ensure convergence on large data
+  max_iter: 1000
+  
+  # Probability: Required for ROC-AUC metric
+  # Note: LogisticRegression always outputs probabilities, this param doesn't exist,
+  # but we ensure the code calls predict_proba() correctly.
+  
+  # Reproducibility
+  random_state: ${seed}
+  
+  # Parallelization: Use all CPU cores for faster training
+  n_jobs: -1
+
+  verbose: true
