@@ -1,11 +1,26 @@
 # @package hydra.sweeper
-# This file merges directly into the hydra.sweeper config
+# Optimized search space for Logistic Regression
 
-# Define the search space parameters here
 params:
-  model.C: interval(1e-5, 1e2)
-  model.solver: choice(saga)
+  # CRITICAL: Use 'tag(log, interval(...))' for C.
+  # Regularization strength spans orders of magnitude; log scale finds optimal values much faster.
+  model.C: tag(log, interval(1e-5, 1e2))
+
+  # Expand solver choices. 'liblinear' is fast for small data; 'saga' is needed for elasticnet/l1.
+  model.solver: choice(liblinear, saga)
+
+  # Penalty options. Note: 'elasticnet' requires solver='saga' to be valid.
+  # Optuna will naturally learn to pair 'elasticnet' with 'saga' over trials.
   model.penalty: choice(l1, l2)
-  # model.l1_ratio: interval(0.1, 0.9)
-  model.max_iter: choice(500, 1000, 2000)
-  seed: choice(42, 7, 123, 456, 69, 1312, 11, 2026)
+
+  # l1_ratio is ONLY used if penalty='elasticnet'.
+  # Optuna handles this conditional dependency automatically (it ignores l1_ratio when penalty=l2).
+  +model.l1_ratio: interval(0.1, 0.9)
+
+  # Max iterations: Keep as choice or use a high default.
+  # Convergence usually happens well before 2000 for scaled data.
+  model.max_iter: choice(1000, 2000)
+
+  # Optional: Uncomment to test split stability, but usually better to keep seed fixed
+  # and rely on the subject-aware split logic in your code.
+  # seed: choice(42, 7, 123, 456)

@@ -1,0 +1,37 @@
+# @package hydra.sweeper
+# Optimized for scikit-learn >= 1.9.0
+# Note: 'probability' parameter is deprecated in 1.9.0. Use CalibratedClassifierCV if needed.
+
+params:
+  # C: Regularization strength. Log scale is critical for SVMs.
+  # Small C = strong regularization (wider margin), Large C = weak regularization (narrow margin).
+  model.C: tag(log, interval(1e-3, 1e4))
+
+  # kernel: The most impactful hyperparameter.
+  # 'rbf' is default and works well for non-linear data.
+  # 'linear' is faster and good for high-dimensional data.
+  # 'poly' and 'sigmoid' are niche but worth testing.
+  model.kernel: choice(rbf, poly, sigmoid)
+
+  # gamma: Kernel coefficient for 'rbf', 'poly', and 'sigmoid'.
+  # 'scale' (default) and 'auto' are safe starting points.
+  # Float values allow fine-tuning; log scale is essential.
+  +model.gamma: tag(log, interval(1e-4, 10.0)) # model.gamma: choice(scale, auto, tag(log, interval(1e-4, 10.0)))
+
+  # degree: Only used for 'poly' kernel. Ignored by others.
+  # Range 2-5 covers most practical polynomial degrees.
+  +model.degree: choice(2, 3, 4, 5)
+
+  # coef0: Independent term in kernel function. Only significant for 'poly' and 'sigmoid'.
+  # Ignored by 'rbf' and 'linear'.
+  +model.coef0: interval(-1.0, 1.0)
+
+  # shrinking: Heuristic to speed up optimization. Usually True is fine.
+  +model.shrinking: choice(true, false)
+
+  # tol: Stopping tolerance. Lower values = more precise but slower convergence.
+  +model.tol: tag(log, interval(1e-4, 1e-2))
+
+  # cache_size: Kernel cache size in MB. Increase if you have RAM to spare for speed.
+  # Default is 200MB.
+  +model.cache_size: choice(200, 500, 1000)

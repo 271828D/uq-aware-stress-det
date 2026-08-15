@@ -1,0 +1,27 @@
+# @package hydra.sweeper
+# Optimized for scikit-learn >= 1.9.0
+
+params:
+  # C: Regularization strength. Log scale is critical for SVMs.
+  model.C: tag(log, interval(1e-4, 1e4))
+
+  # loss: 'squared_hinge' is default and often performs better than 'hinge'.
+  # Note: penalty='l1' does NOT support loss='hinge'.
+  model.loss: choice(squared_hinge) # ++model.loss: choice(hinge, squared_hinge)
+
+  # penalty: 'l1' induces sparsity (feature selection), 'l2' is standard.
+  +model.penalty: choice(l1, l2)
+
+  # dual: "auto" (default in 1.9+) automatically chooses based on n_samples vs n_features.
+  # Explicitly testing False/True can still be beneficial for specific dataset shapes.
+  model.dual: choice("auto")
+
+  # max_iter: LinearSVC often requires more iterations to converge than LogisticRegression.
+  model.max_iter: choice(2000, 5000, 10000)
+
+  # tol: Stopping tolerance. Lower values = more precise but slower.
+  +model.tol: tag(log, interval(1e-5, 1e-3))
+
+  # intercept_scaling: Useful when fit_intercept=True to prevent intercept regularization.
+  # Only relevant if fit_intercept is True (default).
+  +model.intercept_scaling: tag(log, interval(0.1, 10.0))

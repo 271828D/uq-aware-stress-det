@@ -23,7 +23,9 @@ from src.models.factory import ModelFactory
 logger = logging.getLogger(__name__)
 
 
-@hydra.main(version_base=None, config_path="../../conf", config_name="config")
+@hydra.main(
+    version_base=None, config_path="../../configs", config_name="config"
+)
 def train(cfg: DictConfig) -> float:
     """Main training pipeline orchestrated by Hydra."""
 

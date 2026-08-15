@@ -8,3 +8,4 @@ model:
   max_depth: null
   min_samples_split: 2
   random_state: ${seed} # Ensure seed is passed here too if needed
+  verbose: 1

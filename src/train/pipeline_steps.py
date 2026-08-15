@@ -41,11 +41,9 @@ def save_splits(
     val_df.to_csv(val_path, index=False, sep=";")
     test_df.to_csv(test_path, index=False, sep=";")
 
-    logger.info(
-        f"✅ Train split saved: {train_path} ({len(train_df)} samples)"
-    )
-    logger.info(f"✅ Val split saved: {val_path} ({len(val_df)} samples)")
-    logger.info(f"✅ Test split saved: {test_path} ({len(test_df)} samples)")
+    logger.info(f"Train split saved: {train_path} ({len(train_df)} samples)")
+    logger.info(f"Val split saved: {val_path} ({len(val_df)} samples)")
+    logger.info(f"Test split saved: {test_path} ({len(test_df)} samples)")
 
 
 def save_artifacts(
@@ -58,19 +56,19 @@ def save_artifacts(
     """Save the trained model, preprocessor, and results to the output folder."""
     model_path = os.path.join(output_dir, "model.joblib")
     joblib.dump(model, model_path)
-    logger.info(f"✅ Model saved to: {model_path}")
+    logger.info(f"Model saved to: {model_path}")
 
     prep_path = os.path.join(output_dir, "preprocessor.joblib")
     joblib.dump(preprocessor, prep_path)
-    logger.info(f"✅ Preprocessor saved to: {prep_path}")
+    logger.info(f"Preprocessor saved to: {prep_path}")
 
     pred_path = os.path.join(output_dir, "test_predictions.csv")
     predictions_df.to_csv(pred_path, index=False, sep=";")
-    logger.info(f"✅ Predictions saved to: {pred_path}")
+    logger.info(f"Predictions saved to: {pred_path}")
 
     metrics_path = os.path.join(output_dir, "test_metrics.csv")
     pd.DataFrame([metrics]).to_csv(metrics_path, index=False, sep=";")
-    logger.info(f"✅ Metrics saved to: {metrics_path}")
+    logger.info(f"Metrics saved to: {metrics_path}")
 
 
 def prepare_data(cfg: DictConfig, seed: int) -> Tuple[
@@ -87,7 +85,7 @@ def prepare_data(cfg: DictConfig, seed: int) -> Tuple[
     Any,
 ]:
     """Load, split, and preprocess the data."""
-    logger.info("📦 Preparing data...")
+    logger.info("Preparing data...")
 
     with tqdm(total=1, desc="Loading Data", unit="file") as pbar:
         df = load_data_from_path(cfg.data.source_file)

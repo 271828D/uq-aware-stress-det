@@ -43,5 +43,10 @@ data:
 ### 5. Run Training (Single Run)
 Run the trainer with a specific model (e.g., Logistic Regression):
 ```bash
-uv run python src/train/trainer.py model=logistic_regression
+uv run python src/train/trainer.py model=logistic_regression seed=69
+```
+### 6. Multi-Run Training with Hyperparameter Opt.
+Run the trainer with a specific model (e.g., Logistic Regression) and do hyper-parameter search. `Only available with logistic_regression and random_forest`:
+```bash
+uv run python src/train/trainer.py model=logistic_regression search_space=logistic_regression
 ```

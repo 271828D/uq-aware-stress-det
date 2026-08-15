@@ -11,4 +11,4 @@ model:
   kernel: "rbf"
   probability: true  # Required for ROC-AUC and probability outputs
   random_state: ${seed}
-  verbose: true
+  verbose: 1

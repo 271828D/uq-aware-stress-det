@@ -1,6 +1,25 @@
 # @package hydra.sweeper
 params:
-  model.n_estimators: choice(50, 100, 200, 500)
-  model.max_depth: choice(5, 10, 20, "null")
-  model.min_samples_split: choice(2, 5, 10)
-  seed: choice(42, 7, 123, 99, 2024)
+  # n_estimators: More trees generally improve performance until a plateau.
+  # Range 100-1000 is standard. Use step=50 to reduce search space granularity.
+  model.n_estimators: range(100, 1001, 50)
+
+  # max_depth: Crucial for preventing overfitting.
+  # Use 'range' instead of 'choice' to let Optuna explore integers efficiently.
+  # Include None (unlimited depth) as a specific option if desired, but often 10-50 is sufficient.
+  model.max_depth: range(5, 51, 5)
+
+  # min_samples_split: Regularization parameter.
+  # Values > 2 prevent the model from learning overly specific patterns.
+  model.min_samples_split: range(2, 21, 1)
+
+  # min_samples_leaf: (Optional but recommended) Often more stable than min_samples_split.
+  # Ensures every leaf has at least N samples.
+  +model.min_samples_leaf: range(1, 11, 1)
+
+  # max_features: CRITICAL for Random Forest diversity.
+  # 'sqrt' (default) and 'log2' are standard, but tuning the fraction (0.1-1.0) can yield better results.
+  +model.max_features: choice(sqrt, log2, 0.5, 0.7, 1.0)
+
+  # bootstrap: Usually True for Random Forests, but False can be tested (becomes ExtraTrees).
+  +model.bootstrap: choice(true, false)
