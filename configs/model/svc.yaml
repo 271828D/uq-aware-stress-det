@@ -4,7 +4,7 @@
 model:
   _target_: src.models.factory.ModelFactory.get_model
   # _partial_: true  <-- REMOVED: We need the model instance, not a function
-  
+
   # Model Arguments
   model_name: "svc"
   C: 1.0

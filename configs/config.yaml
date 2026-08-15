@@ -7,11 +7,11 @@ defaults:
   - search_space: logistic_regression
   - override hydra/sweeper: optuna  # ✅ Add this line
   - override hydra/sweeper/sampler: tpe  # ✅ TPE is better than random search
-  
-  
 
 project_name: uq-stress-det
 seed: 42
+
+optimized_metric: "f1_score"
 
 # Optuna-specific settings
 hydra:
@@ -29,9 +29,9 @@ hydra:
     storage: null  # Use in-memory (or sqlite:///optuna.db for persistence)
     n_trials: 20  # Total number of hyperparameter combinations to try
     n_jobs: 1  # Sequential trials (increase for parallel if you have multiple CPUs)
-    
+
 
 wandb:
   project: "stress-detection"
   run_name: ${model.model_name}_optuna
-  entity: null   
+  entity: null

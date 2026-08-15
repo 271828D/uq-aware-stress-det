@@ -6,14 +6,18 @@ defined in pipeline_steps.py to train and evaluate models.
 """
 
 import logging
-from typing import Any
 
 import hydra
 import wandb
 from omegaconf import DictConfig, OmegaConf
 
 from src.utils.utils import set_seed
-from src.train.pipeline_steps import prepare_data, train_model, evaluate_model, save_artifacts
+from src.train.pipeline_steps import (
+    prepare_data,
+    train_model,
+    evaluate_model,
+    save_artifacts,
+)
 from src.models.factory import ModelFactory
 
 logger = logging.getLogger(__name__)
@@ -36,20 +40,38 @@ def train(cfg: DictConfig) -> float:
     logger.info("🚀 Starting Training Pipeline...")
 
     # 3. Prepare Data (Load, Split, Preprocess)
-    train_df, val_df, test_df, preprocessor, output_dir, X_train, X_val, X_test, y_train, y_val, y_test = prepare_data(cfg, cfg.seed)
+    (
+        train_df,
+        val_df,
+        test_df,
+        preprocessor,
+        output_dir,
+        X_train,
+        X_val,
+        X_test,
+        y_train,
+        y_val,
+        y_test,
+    ) = prepare_data(cfg, cfg.seed)
 
     # 4. Initialize Model
     logger.info("🤖 Initializing model...")
     model = ModelFactory.get_model(
         model_name=cfg.model.model_name,
-        **{k: v for k, v in cfg.model.items() if k not in ["_target_", "model_name"]}
+        **{
+            k: v
+            for k, v in cfg.model.items()
+            if k not in ["_target_", "model_name"]
+        },
     )
 
     # 5. Train Model
     model = train_model(model, X_train, y_train, X_val, y_val, cfg)
 
     # 6. Evaluate Model
-    metrics, predictions_df = evaluate_model(model, X_test, y_test, test_df, cfg)
+    metrics, predictions_df = evaluate_model(
+        model, X_test, y_test, test_df, cfg
+    )
 
     # 7. Save Artifacts
     logger.info("💾 Saving all artifacts...")
@@ -60,7 +82,9 @@ def train(cfg: DictConfig) -> float:
     # 8. Return metric for Optuna
     metric_name = cfg.get("optimization", {}).get("metric", "f1_score")
     optimized_metric = metrics[metric_name]
-    logger.info(f"🎯 Returning {metric_name} for Optuna: {optimized_metric:.4f}")
+    logger.info(
+        f"🎯 Returning {metric_name} for Optuna: {optimized_metric:.4f}"
+    )
 
     wandb.finish()
     return optimized_metric
