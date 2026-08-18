@@ -9,6 +9,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Dict, Type, List
 from sklearn.svm import SVC, LinearSVC
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
@@ -36,6 +37,7 @@ class ModelFactory:
         "random_forest": RandomForestClassifier,
         "xgboost": XGBClassifier,
         "mlp": MLPClassifier,
+        "knn": KNeighborsClassifier,
     }
 
     # A list of models that support iterative training (like epochs/early stopping)

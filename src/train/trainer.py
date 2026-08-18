@@ -82,7 +82,7 @@ def train(cfg: DictConfig) -> float:
     logger.info("✅ Training pipeline completed successfully!")
 
     # 8. Return metric for Optuna
-    metric_name = cfg.get("optimization", {}).get("metric", "f1_score")
+    metric_name = cfg.optimized_metric
     optimized_metric = metrics[metric_name]
     logger.info(
         f"🎯 Returning {metric_name} for Optuna: {optimized_metric:.4f}"
