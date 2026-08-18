@@ -15,6 +15,9 @@ model:
   subsample: 0.8           # Row sampling
   colsample_bytree: 0.8    # Column sampling
 
+  early_stopping_rounds: ${training.patience}
+  eval_metric: "logloss"
+
   # Reproducibility & GPU
   random_state: ${seed}
   tree_method: "hist"      # Fast histogram algorithm (GPU/CPU agnostic)

@@ -1,0 +1,19 @@
+# @package _global_
+# Optuna Search Space for MLP Classifier (CORRECTED)
+# Note: List-based choices MUST be quoted to prevent YAML parsing them as native lists.
+
+hydra:
+  sweeper:
+    params:
+      # Architecture: QUOTED string to preserve list structure for Optuna
+      model.hidden_layer_sizes: "choice([50], [25], [20], [25, 12, 1], [25, 12])"
+
+      # Activation: QUOTED string (single values don't strictly need quotes, but safer)
+      model.activation: "choice('relu', 'tanh', 'logistic')"
+
+      # Regularization: Numeric interval (no quotes needed)
+      model.alpha: interval(0.0001, 0.01)
+
+      # Optimization: '+' required because these keys do NOT exist in base mlp.yaml
+      +model.learning_rate: "choice('constant', 'adaptive')"
+      +model.learning_rate_init: interval(0.0001, 0.001)

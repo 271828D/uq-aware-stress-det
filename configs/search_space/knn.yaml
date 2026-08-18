@@ -1,0 +1,18 @@
+# @package _global_
+# Optuna Search Space for KNN Classifier
+
+hydra:
+  sweeper:
+    params:
+      # Number of neighbors: Sweep odd numbers to avoid ties in binary classification
+      # Range: 1 to 21 (covers local to global patterns)
+      model.n_neighbors: choice(1, 3, 5, 7, 9, 11, 15, 21)
+
+      # Weighting: 'distance' often outperforms 'uniform' by giving closer neighbors more vote
+      model.weights: "choice('uniform', 'distance')"
+
+      # Distance Metric: Euclidean is standard, Manhattan can be robust to outliers
+      model.metric: "choice('euclidean', 'manhattan', 'minkowski')"
+
+      # Minkowski Power: 1=Manhattan, 2=Euclidean. Sweep if metric='minkowski'
+      model.p: choice(1, 2)

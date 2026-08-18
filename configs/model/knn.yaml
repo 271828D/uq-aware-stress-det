@@ -1,0 +1,19 @@
+# @package _global_
+# K-Nearest Neighbors Configuration (Lazy Learner)
+# Note: Requires scaled features (handled by src/data/preprocessing.py)
+
+model:
+  _target_: src.models.factory.ModelFactory.get_model
+  model_name: "knn"
+
+  # Core Hyperparameters
+  n_neighbors: 5             # Default 'k' value (odd numbers often preferred for binary classification)
+  weights: "uniform"         # 'uniform' or 'distance' (inverse distance weighting)
+  metric: "euclidean"        # Distance metric ('euclidean', 'manhattan', 'minkowski')
+  algorithm: "auto"          # 'auto', 'ball_tree', 'kd_tree', 'brute'
+  leaf_size: 30              # Leaf size for tree-based algorithms (affects speed/memory)
+  p: 2                       # Power parameter for Minkowski metric (2=Euclidean, 1=Manhattan)
+
+  # Reproducibility
+  # KNN is deterministic given the data and metric, but n_jobs can affect ordering in some versions
+  n_jobs: -1                 # Use all CPU cores for distance computation (faster prediction)

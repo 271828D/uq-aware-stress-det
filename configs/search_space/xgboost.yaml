@@ -4,7 +4,7 @@
 params:
   # n_estimators: Number of boosting rounds.
   # Higher values usually help if learning_rate is small, but increase compute time.
-  model.n_estimators: range(200, 2001, 100)
+  ++model.n_estimators: range(200, 2001, 100)
 
   # max_depth: Controls tree complexity. 3-9 is the "sweet spot" for most tabular data.
   # Values > 10 often lead to overfitting unless min_child_weight is high.
@@ -23,7 +23,7 @@ params:
 
   # min_child_weight: Minimum sum of instance weight (hessian) in a child.
   # Higher values prevent the model from learning specific patterns (regularization).
-  model.min_child_weight: tag(log, interval(1, 20))
+  +model.min_child_weight: tag(log, interval(1, 20))
 
   # reg_alpha (L1) & reg_lambda (L2): Regularization terms on weights.
   # Log scale is critical as optimal values can span orders of magnitude.
@@ -35,12 +35,12 @@ params:
   +model.gamma: tag(log, interval(1e-8, 10.0))
 
   # grow_policy: 'depthwise' (standard) vs 'lossguide' (leaf-wise, often better with max_leaves).
-  model.grow_policy: choice(depthwise, lossguide)
+  +model.grow_policy: choice(depthwise, lossguide)
 
   # max_leaves: Only used if grow_policy='lossguide'.
   # Alternative constraint to max_depth. Set to 0 if using depthwise.
   # We use a choice to effectively disable it for depthwise or test small/large for lossguide.
-  model.max_leaves: choice(0, 31, 63, 127)
+  +model.max_leaves: choice(0, 31, 63, 127)
 
   # tree_method: 'hist' is default and fast. 'approx' can be better for very large datasets.
   # 'exact' is slow but precise for small data.

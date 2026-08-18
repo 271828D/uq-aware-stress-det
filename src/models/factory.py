@@ -6,13 +6,12 @@ by name, ensuring consistent configuration and easy extension.
 """
 
 from __future__ import annotations
-
 import logging
 from typing import Any, Dict, Type, List
-
 from sklearn.svm import SVC, LinearSVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.neural_network import MLPClassifier
 from xgboost import XGBClassifier
 
 # Set up logging to track which models are created
@@ -36,11 +35,15 @@ class ModelFactory:
         "logistic_regression": LogisticRegression,
         "random_forest": RandomForestClassifier,
         "xgboost": XGBClassifier,
+        "mlp": MLPClassifier,
     }
 
     # A list of models that support iterative training (like epochs/early stopping)
     # This helps the trainer know which models can be trained step-by-step.
-    _iterative_models: List[str] = ["xgboost"]
+    # Note: MLP is iterative but uses internal validation for early stopping.
+    # We handle it here to allow max_iter control, but disable internal early_stopping
+    # in the config to prevent data leakage.
+    _iterative_models: List[str] = ["xgboost", "mlp"]
 
     @classmethod
     def get_model(cls, model_name: str, **kwargs: Any) -> Any:
@@ -165,30 +168,37 @@ class ModelFactory:
         # Start with empty parameters (default for most models like SVC, RandomForest)
         fit_params: Dict[str, Any] = {}
 
-        # Check if this is an iterative model (like XGBoost)
+        # Check if this is an iterative model (like XGBoost or MLP)
         if cls.is_iterative(model_name):
             logger.info(
-                f"🔄 Detected iterative model: {model_name}."
+                f"🔄 Detected iterative model: {model_name}. "
                 f"Configuring training parameters."
             )
 
-            # Set up the validation dataset for monitoring during training
-            fit_params["eval_set"] = [(X_val, y_val)]
-
-            # Disable verbose output to keep logs clean
-            fit_params["verbose"] = False
-
-            # If early stopping is enabled, add the patience parameter
-            if early_stopping:
-                fit_params["early_stopping_rounds"] = patience
+            # MLPClassifier handles early stopping internally via validation_fraction.
+            # To prevent data leakage, we DO NOT pass eval_set to MLP.
+            # Instead, we rely on max_iter and alpha (regularization) from config.
+            if model_name == "mlp":
                 logger.info(
-                    f"✅ Early stopping enabled with patience={patience}"
+                    "MLP detected: Using internal max_iter. "
+                    "External eval_set ignored to prevent leakage."
                 )
+                # No eval_set for MLP. Early stopping is disabled in config.
+            else:
+                # XGBoost logic (external eval_set)
+                fit_params["eval_set"] = [(X_val, y_val)]
+                fit_params["verbose"] = False
+
+                if early_stopping:
+                    fit_params["early_stopping_rounds"] = patience
+                    logger.info(
+                        f"✅ XGBoost Early stopping enabled with patience={patience}"
+                    )
 
         else:
             # For non-iterative models (SVC, RandomForest), no special params needed
             logger.info(
-                f"⚡ Detected batch model: {model_name}."
+                f"⚡ Detected batch model: {model_name}. "
                 f"Using default training parameters."
             )
 
