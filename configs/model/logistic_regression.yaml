@@ -31,4 +31,4 @@ model:
   # Parallelization: Use all CPU cores for faster training
   n_jobs: -1
 
-  verbose: true
+  verbose: 1

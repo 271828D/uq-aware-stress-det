@@ -77,7 +77,7 @@ def train(cfg: DictConfig) -> float:
 
     # 7. Save Artifacts
     logger.info("💾 Saving all artifacts...")
-    save_artifacts(model, preprocessor, metrics, predictions_df, output_dir)
+    save_artifacts(output_dir, model, preprocessor, metrics, predictions_df)
 
     logger.info("✅ Training pipeline completed successfully!")
 

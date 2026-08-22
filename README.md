@@ -48,5 +48,10 @@ uv run python src/train/trainer.py model=logistic_regression seed=69
 ### 6. Multi-Run Training with Hyperparameter Opt.
 Run the trainer with a specific model (e.g., Logistic Regression) and do hyper-parameter search. `Only available with logistic_regression and random_forest`:
 ```bash
-uv run python src/train/trainer.py model=logistic_regression search_space=logistic_regression
+uv run python src/train/trainer.py -m model=logistic_regression search_space=logistic_regression seed=42
+```
+### 7. Single Run Training with Best Hyperparameter Config.
+Retrain the model with a specific model (e.g., Logistic Regression) and hyper-parameter config. `Only available with logistic_regression and random_forest`:
+```bash
+python src/evaluation/test.py   hydra.mode=RUN   model=linear_svc   best_params="multirun/linear_svc/2026-08-21_08-34-09/optimization_results.yaml" seed=42
 ```

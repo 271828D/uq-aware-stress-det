@@ -17,7 +17,7 @@ model:
 
   # Regularization & Convergence
   alpha: 0.001                   # L2 regularization (higher than default 0.0001 to prevent overfitting)
-  max_iter: 500                  # Higher than default (200) to ensure convergence without early stopping
+  max_iter: 250                  # Higher than default (200) to ensure convergence without early stopping
   tol: 1e-4                      # Tolerance for optimization stopping
 
   # Early Stopping (DISABLED for Safety)

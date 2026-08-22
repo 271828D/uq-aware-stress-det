@@ -10,7 +10,6 @@ import os
 from typing import Any, Dict, Tuple
 
 import hydra
-import joblib
 import pandas as pd
 import wandb
 from tqdm import tqdm
@@ -44,31 +43,6 @@ def save_splits(
     logger.info(f"Train split saved: {train_path} ({len(train_df)} samples)")
     logger.info(f"Val split saved: {val_path} ({len(val_df)} samples)")
     logger.info(f"Test split saved: {test_path} ({len(test_df)} samples)")
-
-
-def save_artifacts(
-    model: Any,
-    preprocessor: Any,
-    metrics: Dict[str, float],
-    predictions_df: pd.DataFrame,
-    output_dir: str,
-) -> None:
-    """Save the trained model, preprocessor, and results to the output folder."""
-    model_path = os.path.join(output_dir, "model.joblib")
-    joblib.dump(model, model_path)
-    logger.info(f"Model saved to: {model_path}")
-
-    prep_path = os.path.join(output_dir, "preprocessor.joblib")
-    joblib.dump(preprocessor, prep_path)
-    logger.info(f"Preprocessor saved to: {prep_path}")
-
-    pred_path = os.path.join(output_dir, "test_predictions.csv")
-    predictions_df.to_csv(pred_path, index=False, sep=";")
-    logger.info(f"Predictions saved to: {pred_path}")
-
-    metrics_path = os.path.join(output_dir, "test_metrics.csv")
-    pd.DataFrame([metrics]).to_csv(metrics_path, index=False, sep=";")
-    logger.info(f"Metrics saved to: {metrics_path}")
 
 
 def prepare_data(cfg: DictConfig, seed: int) -> tuple[

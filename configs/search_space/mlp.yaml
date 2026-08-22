@@ -6,7 +6,7 @@ hydra:
   sweeper:
     params:
       # Architecture: QUOTED string to preserve list structure for Optuna
-      model.hidden_layer_sizes: "choice([50], [25], [20], [25, 12, 1], [25, 12])"
+      model.hidden_layer_sizes: "choice([30], [25], [20], [25, 12, 1], [25, 12])"
 
       # Activation: QUOTED string (single values don't strictly need quotes, but safer)
       model.activation: "choice('relu', 'tanh', 'logistic')"

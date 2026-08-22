@@ -20,10 +20,10 @@ hydra:
   mode: MULTIRUN
   # Evaluation Output (Used when hydra.mode=RUN)
   run:
-    dir: outputs/${model.model_name}/${now:%Y-%m-%d_%H-%M-%S}/eval_seed_${seed}_split_$(data.stratified_split)
+    dir: outputs/${model.model_name}/${now:%Y-%m-%d_%H-%M-%S}/eval_seed_${seed}_stratified_split_${data.stratified_split}_calibration_${data.calibrate}
   sweep:
     dir: multirun/${model.model_name}/${now:%Y-%m-%d_%H-%M-%S}
-    subdir: trial_${hydra.job.num}_seed_${seed}_split_$(data.stratified_split)
+    subdir: trial_${hydra.job.num}_seed_${seed}_stratified_split_${data.stratified_split}
   sweeper:
     sampler:
       seed: ${seed}
