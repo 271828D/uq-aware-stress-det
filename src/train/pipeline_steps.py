@@ -17,7 +17,7 @@ from tqdm import tqdm
 from omegaconf import DictConfig
 
 from src.data.loader import load_data_from_path
-from src.data.splits import split_by_subject
+from src.data.splits import split_by_subject, split_by_subject_stratified
 from src.data.preprocessing import fit_transform_pipeline
 from src.models.factory import ModelFactory
 from src.utils.probabilities import get_prediction_probabilities
@@ -71,7 +71,7 @@ def save_artifacts(
     logger.info(f"Metrics saved to: {metrics_path}")
 
 
-def prepare_data(cfg: DictConfig, seed: int) -> Tuple[
+def prepare_data(cfg: DictConfig, seed: int) -> tuple[
     pd.DataFrame,
     pd.DataFrame,
     pd.DataFrame,
@@ -92,14 +92,29 @@ def prepare_data(cfg: DictConfig, seed: int) -> Tuple[
         pbar.update(1)
 
     with tqdm(total=1, desc="Splitting Subjects", unit="split") as pbar:
-        train_df, val_df, test_df = split_by_subject(
-            df,
-            subject_col=cfg.data.subject_col,
-            train_size=1.0 - cfg.data.test_size - cfg.data.val_size,
-            val_size=cfg.data.val_size,
-            test_size=cfg.data.test_size,
-            random_state=seed,
-        )
+        use_stratified = cfg.data.get("stratified_split", False)
+
+        if use_stratified:
+            logger.info("Using Stratified Subject-Aware Splitting")
+            train_df, val_df, test_df = split_by_subject_stratified(
+                df,
+                subject_col=cfg.data.subject_col,
+                label_col=cfg.data.target_col,
+                n_train_subjects=cfg.data.n_train_subjects,
+                n_val_subjects=cfg.data.n_val_subjects,
+                n_test_subjects=cfg.data.n_test_subjects,
+                random_state=seed,
+            )
+        else:
+            logger.info("Using Standard Subject-Aware Splitting")
+            train_df, val_df, test_df = split_by_subject(
+                df,
+                subject_col=cfg.data.subject_col,
+                train_size=1.0 - cfg.data.test_size - cfg.data.val_size,
+                val_size=cfg.data.val_size,
+                test_size=cfg.data.test_size,
+                random_state=seed,
+            )
         pbar.update(1)
 
     output_dir = hydra.core.hydra_config.HydraConfig.get().runtime.output_dir

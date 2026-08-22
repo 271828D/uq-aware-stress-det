@@ -1,0 +1,49 @@
+# @package _global_
+# Data loading and splitting configuration
+
+data:
+  # File I/O
+  source_file: "data/openface_features_with_metadata_stressID_resized_ExtraFeatures.csv"
+  separator: ";"
+
+  # Column Names (Aligned with trainer.py expectations)
+  target_col: "label"
+  subject_col: "subject_id"
+
+  # Split Strategy Flag
+  # Set to true to use stratified subject-aware splitting (requires exact subject counts below)
+  # Set to false to use standard ratio-based subject-aware splitting
+  stratified_split: true
+
+  # --- Configuration for Stratified Split (stratified_split: true) ---
+  # Exact number of subjects for each split. Must sum to total unique subjects (53).
+  n_train_subjects: 42
+  n_val_subjects: 5
+  n_test_subjects: 6
+
+  # --- Configuration for Standard Split (stratified_split: false) ---
+  # Ratios used only when stratified_split is false.
+  test_size: 0.1
+  val_size: 0.1
+  random_state: 42
+
+  # Feature Lists (Critical for Preprocessing)
+  numerical_features:
+    - gaze_yaw
+    - gaze_pitch
+    - au01
+    - au02
+    - au03
+    - au04
+    - au05
+    - au06
+    - au07
+    - au08
+
+  categorical_features:
+    - activity
+
+  # Metadata to preserve in prediction CSVs
+  metadata_cols:
+    - path
+    - subject_id
