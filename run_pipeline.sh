@@ -2,8 +2,10 @@
 set -e
 
 # Define: "model:seed" (search_space = model name)
-MODELS=("knn" "mlp" "random_forest" "linear_svc" "logistic_regression" "xgboost")
-SEEDS=(42 150 350 666 777 1911 2512 2691 3312 6969)
+# MODELS=("linear_svc" "logistic_regression" "xgboost" "mlp") # "random_forest" "knn" for future executions with more time
+MODELS=("xgboost")
+SEEDS=(6969)
+# SEEDS=(42 150 350 666 777 1911 2512 2691 3312 6969)
 
 for MODEL in "${MODELS[@]}"; do
     for SEED in "${SEEDS[@]}"; do
