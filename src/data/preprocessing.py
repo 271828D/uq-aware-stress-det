@@ -144,8 +144,9 @@ def fit_transform_pipeline(
 
     # Log shapes to verify consistency
     logger.info(
-        f"Processed shapes: Train={X_train_processed.shape},",
-        f"Val={X_val_processed.shape}," f"Test={X_test_processed.shape}",
+        f"Processed shapes: Train={X_train_processed.shape},"
+        f"Val={X_val_processed.shape},"
+        f"Test={X_test_processed.shape}"
     )
 
     return (

@@ -13,6 +13,8 @@ import numpy as np
 import pandas as pd
 import yaml
 from omegaconf import DictConfig, OmegaConf
+from sklearn.linear_model import LogisticRegression
+from sklearn.isotonic import IsotonicRegression
 from scipy.special import expit
 from tqdm import tqdm
 
@@ -380,8 +382,6 @@ def main(cfg: DictConfig) -> Dict[str, float]:
         logger.info(
             "🎯 Calibrating probabilities on Validation set (manual)..."
         )
-        from sklearn.linear_model import LogisticRegression
-        from sklearn.isotonic import IsotonicRegression
 
         # Get raw scores from base model on Val set
         if hasattr(base_model, "decision_function"):

@@ -12,13 +12,9 @@ import wandb
 from omegaconf import DictConfig, OmegaConf
 
 from src.utils.utils import set_seed
-from src.train.pipeline_steps import (
-    prepare_data,
-    train_model,
-    evaluate_model,
-    save_artifacts,
-)
+from src.train.pipeline_steps import prepare_data, train_model, evaluate_model
 from src.models.factory import ModelFactory
+from src.utils.artifacts import save_artifacts
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +36,8 @@ def train(cfg: DictConfig) -> float:
     )
 
     logger.info("🚀 Starting Training Pipeline...")
+
+    # print(f"Config params: {cfg}")
 
     # 3. Prepare Data (Load, Split, Preprocess)
     (
