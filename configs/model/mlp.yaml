@@ -1,0 +1,34 @@
+# @package _global_
+# MLP Classifier Configuration (Iterative Neural Network - Safe Baseline)
+# Note: early_stopping is DISABLED to prevent data leakage from internal validation split.
+# Regularization (alpha) and max_iter are used to control overfitting.
+
+model:
+  _target_: src.models.factory.ModelFactory.get_model
+  # No _partial_: We want the instance directly
+
+  # Model Arguments
+  model_name: "mlp"
+
+  # Architecture Hyperparameters
+  hidden_layer_sizes: [100]      # Single hidden layer with 100 neurons (standard default)
+  activation: "relu"             # Best for non-linear tabular data
+  solver: "adam"                 # Robust stochastic gradient descent
+
+  # Regularization & Convergence
+  alpha: 0.001                   # L2 regularization (higher than default 0.0001 to prevent overfitting)
+  max_iter: 500
+  # max_iter: 10                  # Higher than default (200) to ensure convergence without early stopping
+  tol: 1e-4                      # Tolerance for optimization stopping
+
+  # Early Stopping (DISABLED for Safety)
+  early_stopping: false          # CRITICAL: Must be false to use external validation split correctly
+  validation_fraction: 0.1       # Ignored when early_stopping=False
+  n_iter_no_change: 10           # Ignored when early_stopping=False
+
+  # Reproducibility
+  random_state: ${seed}
+  shuffle: true                  # Shuffle samples in each iteration
+
+  # Note: By disabling internal early_stopping, we ensure the model
+  # is evaluated ONLY on the external subject-aware validation set.

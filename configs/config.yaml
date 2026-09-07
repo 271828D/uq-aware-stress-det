@@ -5,33 +5,38 @@ defaults:
   - data: stress_data
   - training: default
   - search_space: logistic_regression
-  - override hydra/sweeper: optuna  # ✅ Add this line
-  - override hydra/sweeper/sampler: tpe  # ✅ TPE is better than random search
-  
-  
+  - override hydra/sweeper: optuna
+  - override hydra/sweeper/sampler: tpe
 
 project_name: uq-stress-det
 seed: 42
+optimized_metric: "f1_score"
+
+best_params: /home/x271828/projects/UQ-stress-det/multirun/xgboost/2026-08-19_23-53-45/optimization_results.yaml
 
 # Optuna-specific settings
 hydra:
-  mode: MULTIRUN  # Required for Optuna
+  # Mode: MULTIRUN for Optuna tuning, RUN for final evaluation
+  mode: MULTIRUN
+  # Evaluation Output (Used when hydra.mode=RUN)
+  run:
+    dir: outputs/${model.model_name}/${now:%Y-%m-%d_%H-%M-%S}/eval_seed_${seed}_stratified_split_${data.stratified_split}_calibration_${data.calibrate}
   sweep:
     dir: multirun/${model.model_name}/${now:%Y-%m-%d_%H-%M-%S}
-    subdir: seed_${seed}_${now:%Y-%m-%d_%H-%M-%S}
+    subdir: trial_${hydra.job.num}_seed_${seed}_stratified_split_${data.stratified_split}
   sweeper:
     sampler:
-      seed: ${seed}  # Reproducible trials
-      n_startup_trials: 5  # Random trials before Bayesian optimization kicks in
-      n_ei_candidates: 24  # Number of candidates for improvement
-    direction: maximize  # We want to maximize F1-score
+      seed: ${seed}
+      n_startup_trials: 5
+      n_ei_candidates: 24
+    direction: maximize
     study_name: ${model.model_name}_tuning
-    storage: null  # Use in-memory (or sqlite:///optuna.db for persistence)
-    n_trials: 20  # Total number of hyperparameter combinations to try
-    n_jobs: 1  # Sequential trials (increase for parallel if you have multiple CPUs)
-    
+    storage: null
+    n_trials: 50
+    # n_trials: 2
+    n_jobs: 1
 
 wandb:
   project: "stress-detection"
   run_name: ${model.model_name}_optuna
-  entity: null   
+  entity: null

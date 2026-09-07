@@ -1,0 +1,47 @@
+# @package hydra.sweeper
+# Optimized for XGBoost >= 3.4.0 (Scikit-Learn API)
+
+params:
+  # n_estimators: Number of boosting rounds.
+  # Higher values usually help if learning_rate is small, but increase compute time.
+  ++model.n_estimators: range(200, 2001, 100)
+
+  # max_depth: Controls tree complexity. 3-9 is the "sweet spot" for most tabular data.
+  # Values > 10 often lead to overfitting unless min_child_weight is high.
+  model.max_depth: range(3, 11, 1)
+
+  # learning_rate (eta): Step size shrinkage.
+  # Log scale is essential. Lower values (0.01-0.1) require more estimators but generalize better.
+  model.learning_rate: tag(log, interval(0.001, 0.3))
+
+  # subsample: Row sampling ratio. Prevents overfitting by introducing randomness.
+  model.subsample: interval(0.6, 1.0)
+
+  # colsample_bytree: Column sampling ratio per tree.
+  # Reduces correlation between trees, improving generalization.
+  model.colsample_bytree: interval(0.6, 1.0)
+
+  # min_child_weight: Minimum sum of instance weight (hessian) in a child.
+  # Higher values prevent the model from learning specific patterns (regularization).
+  +model.min_child_weight: tag(log, interval(1, 20))
+
+  # reg_alpha (L1) & reg_lambda (L2): Regularization terms on weights.
+  # Log scale is critical as optimal values can span orders of magnitude.
+  +model.reg_alpha: tag(log, interval(1e-8, 10.0))
+  +model.reg_lambda: tag(log, interval(1e-8, 10.0))
+
+  # gamma: Minimum loss reduction required to make a split.
+  # Acts as a pre-pruning parameter.
+  +model.gamma: tag(log, interval(1e-8, 10.0))
+
+  # grow_policy: 'depthwise' (standard) vs 'lossguide' (leaf-wise, often better with max_leaves).
+  +model.grow_policy: choice(depthwise, lossguide)
+
+  # max_leaves: Only used if grow_policy='lossguide'.
+  # Alternative constraint to max_depth. Set to 0 if using depthwise.
+  # We use a choice to effectively disable it for depthwise or test small/large for lossguide.
+  +model.max_leaves: choice(0, 31, 63, 127)
+
+  # tree_method: 'hist' is default and fast. 'approx' can be better for very large datasets.
+  # 'exact' is slow but precise for small data.
+  model.tree_method: choice(hist, approx)
