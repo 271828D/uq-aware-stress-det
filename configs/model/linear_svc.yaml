@@ -4,24 +4,24 @@
 model:
   _target_: src.models.factory.ModelFactory.get_model
   model_name: "linear_svc"
-  
+
   # Regularization strength
   C: 1.0
-  
+
   # Loss function: 'squared_hinge' is often better than 'hinge'
   loss: "squared_hinge"
-  
+
   # Max iterations: Increased for convergence on large data
   max_iter: 10000
-  
+
   # Dual: False is usually faster when n_samples > n_features (your case)
   dual: false
-  
+
   # Reproducibility
   random_state: ${seed}
-  
+
   # Parallelization (Note: LinearSVC n_jobs support is limited compared to RF/LR)
   # n_jobs is often ignored in LinearSVC depending on sklearn version, but safe to include
   # n_jobs: -1
 
-  verbose: true
+  verbose: 1

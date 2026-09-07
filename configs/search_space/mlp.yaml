@@ -1,0 +1,22 @@
+# @package _global_
+# Optuna Search Space for MLP Classifier
+
+hydra:
+  sweeper:
+    params:
+      # Use LISTS (not tuples) — Hydra does not support () in overrides
+      model.hidden_layer_sizes: "choice([15, 1], [15, 8, 1], [15, 10, 1], [15, 5, 1], [15, 8, 4, 1], [15, 10, 5, 1])"
+      # model.hidden_layer_sizes: "choice([30, 1])"
+
+      model.activation: "choice('relu', 'tanh', 'logistic')"
+
+      model.alpha: interval(0.0001, 0.01)
+
+      +model.batch_size: "choice(2048, 1024, 512)"
+
+      +model.learning_rate: "choice('constant', 'adaptive')"
+      +model.learning_rate_init: interval(0.0001, 0.01)
+
+      +model.verbose: True
+
+      +warm_start: True

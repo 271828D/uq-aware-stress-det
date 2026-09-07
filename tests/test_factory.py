@@ -23,8 +23,10 @@ class TestModelFactoryInstantiation:
     def test_create_svc_with_params(self):
         """Test creating an SVC model with custom parameters."""
         # Create an SVC model with specific settings
-        model = ModelFactory.get_model("svc", C=1.5, kernel="rbf", random_state=42)
-        
+        model = ModelFactory.get_model(
+            "svc", C=1.5, kernel="rbf", random_state=42
+        )
+
         # Verify it's the correct type
         assert isinstance(model, SVC)
         # Verify the parameters were set correctly
@@ -35,29 +37,35 @@ class TestModelFactoryInstantiation:
     def test_create_linear_svc(self):
         """Test creating a LinearSVC model."""
         model = ModelFactory.get_model("linear_svc", C=0.5, random_state=123)
-        
+
         assert isinstance(model, LinearSVC)
         assert model.C == 0.5
 
     def test_create_logistic_regression(self):
         """Test creating a LogisticRegression model."""
-        model = ModelFactory.get_model("logistic_regression", C=2.0, max_iter=500)
-        
+        model = ModelFactory.get_model(
+            "logistic_regression", C=2.0, max_iter=500
+        )
+
         assert isinstance(model, LogisticRegression)
         assert model.C == 2.0
 
     def test_create_random_forest(self):
         """Test creating a RandomForestClassifier model."""
-        model = ModelFactory.get_model("random_forest", n_estimators=200, max_depth=10)
-        
+        model = ModelFactory.get_model(
+            "random_forest", n_estimators=200, max_depth=10
+        )
+
         assert isinstance(model, RandomForestClassifier)
         assert model.n_estimators == 200
         assert model.max_depth == 10
 
     def test_create_xgboost(self):
         """Test creating an XGBClassifier model."""
-        model = ModelFactory.get_model("xgboost", n_estimators=150, learning_rate=0.05)
-        
+        model = ModelFactory.get_model(
+            "xgboost", n_estimators=150, learning_rate=0.05
+        )
+
         assert isinstance(model, XGBClassifier)
         assert model.n_estimators == 150
         assert model.learning_rate == 0.05
@@ -68,7 +76,7 @@ class TestModelFactoryInstantiation:
         model1 = ModelFactory.get_model("SVC")
         model2 = ModelFactory.get_model("SvC")
         model3 = ModelFactory.get_model("svc")
-        
+
         # All should be SVC instances
         assert isinstance(model1, SVC)
         assert isinstance(model2, SVC)
@@ -78,7 +86,7 @@ class TestModelFactoryInstantiation:
         """Test that requesting an unknown model raises a ValueError."""
         with pytest.raises(ValueError) as excinfo:
             ModelFactory.get_model("unknown_model")
-        
+
         # Check that the error message lists available models
         assert "not recognized" in str(excinfo.value)
         assert "svc" in str(excinfo.value)
@@ -87,7 +95,7 @@ class TestModelFactoryInstantiation:
         """Test that 'null' and 'None' strings are converted to None."""
         # When config files send "null" as a string, it should become None
         model = ModelFactory.get_model("svc", C="null", kernel="None")
-        
+
         assert model.C is None
         assert model.kernel is None
 
@@ -122,3 +130,58 @@ class TestModelFactoryGetFitParams:
         # Create simple dummy data for validation set
         self.X_val = np.array([[1.0, 2.0], [3.0, 4.0]])
         self.y_val = np.array([0, 1])
+
+    def test_get_fit_params_xgboost_with_early_stopping(self):
+        """Test that XGBoost gets eval_set and early_stopping_rounds."""
+        params = ModelFactory.get_fit_params(
+            model_name="xgboost",
+            X_val=self.X_val,
+            y_val=self.y_val,
+            early_stopping=True,
+            patience=5,
+            max_epochs=100,
+        )
+
+        assert "eval_set" in params
+        assert params["early_stopping_rounds"] == 5
+        assert params["verbose"] is False
+
+    def test_get_fit_params_xgboost_without_early_stopping(self):
+        """Test that XGBoost gets eval_set but NO early_stopping_rounds if disabled."""
+        params = ModelFactory.get_fit_params(
+            model_name="xgboost",
+            X_val=self.X_val,
+            y_val=self.y_val,
+            early_stopping=False,
+            patience=5,
+            max_epochs=100,
+        )
+
+        assert "eval_set" in params
+        assert "early_stopping_rounds" not in params
+
+    def test_get_fit_params_svc_empty_dict(self):
+        """Test that SVC (non-iterative) gets an empty dict."""
+        params = ModelFactory.get_fit_params(
+            model_name="svc",
+            X_val=self.X_val,
+            y_val=self.y_val,
+            early_stopping=True,  # Should be ignored
+            patience=5,
+            max_epochs=100,
+        )
+
+        assert params == {}
+
+    def test_get_fit_params_random_forest_empty_dict(self):
+        """Test that RandomForest (non-iterative) gets an empty dict."""
+        params = ModelFactory.get_fit_params(
+            model_name="random_forest",
+            X_val=self.X_val,
+            y_val=self.y_val,
+            early_stopping=True,
+            patience=5,
+            max_epochs=100,
+        )
+
+        assert params == {}

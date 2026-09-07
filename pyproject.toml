@@ -49,3 +49,13 @@ extend-exclude = '''
 [tool.coverage.run]
 source = ["src"]
 omit = ["*/tests/*", "*/notebooks/*", "*/data/*"]
+
+[dependency-groups]
+docs = [
+    "mkdocs-material>=9.5",
+    "mkdocstrings[python]>=0.25",
+    "mkdocs-autorefs>=1.2",
+]
+
+[tool.uv]
+package = true  # Ensures the project is importable for mkdocstrings

@@ -11,7 +11,7 @@ import pytest
 def sample_subject_df() -> pd.DataFrame:
     """
     Creates a small DataFrame with known subject distribution.
-    
+
     Structure:
     - 3 Subjects (A, B, C)
     - 2 Samples per subject (6 total rows)
@@ -33,12 +33,18 @@ def large_synthetic_df() -> pd.DataFrame:
     """
     n_subjects = 100
     samples_per_subject = 10
-    
-    subjects = [f"subj_{i}" for i in range(n_subjects) for _ in range(samples_per_subject)]
+
+    subjects = [
+        f"subj_{i}"
+        for i in range(n_subjects)
+        for _ in range(samples_per_subject)
+    ]
     features = list(range(n_subjects * samples_per_subject))
-    
-    return pd.DataFrame({
-        "subject_id": subjects,
-        "feature_val": features,
-        "label": [0, 1] * (n_subjects * samples_per_subject // 2)
-    })
+
+    return pd.DataFrame(
+        {
+            "subject_id": subjects,
+            "feature_val": features,
+            "label": [0, 1] * (n_subjects * samples_per_subject // 2),
+        }
+    )

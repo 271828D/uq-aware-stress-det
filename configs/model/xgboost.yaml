@@ -4,20 +4,23 @@
 model:
   _target_: src.models.factory.ModelFactory.get_model
   # No _partial_: We want the instance directly
-  
+
   # Model Arguments
   model_name: "xgboost"
-  
+
   # Core Hyperparameters
   n_estimators: 1000       # Max number of trees (epochs)
   max_depth: 6             # Depth of each tree
   learning_rate: 0.01      # Step size shrinkage
   subsample: 0.8           # Row sampling
   colsample_bytree: 0.8    # Column sampling
-  
+
+  early_stopping_rounds: ${training.patience}
+  eval_metric: "logloss"
+
   # Reproducibility & GPU
   random_state: ${seed}
   tree_method: "hist"      # Fast histogram algorithm (GPU/CPU agnostic)
-  
+
   # Note: 'eval_metric' is usually handled inside trainer.py via fit_params
-  # to align with the validation set we created.   
+  # to align with the validation set we created.
