@@ -137,7 +137,7 @@ DEPENDENCIES
 LICENSE
 -------
 
-MIT -- see LICENSE for details.
+TBD -- see LICENSE for details.
 
 REFERENCES
 ----------
